@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import {Link, useNavigate} from 'react-router-dom'
+import { useAuth } from '../assets/context/ContextProvider'
 
 
 
@@ -8,22 +9,22 @@ const Login = () => {
 const navigate = useNavigate()
 const[email,setEmail] = useState()
 const[password,setPassword] = useState()
+const {login} = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     // const userData = {
     //   name,  // ✅ Ensure correct field names match backend schema
     //   email,
     //   password,
     // };
-  
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", {email,password}, {
         headers: { "Content-Type": "application/json" }, // ✅ Ensure correct JSON headers
       });
   
       if (response.data && response.data.token) {
+        login(response.data.user)
         localStorage.setItem("token", response.data.token);
         navigate("/");
       } else {

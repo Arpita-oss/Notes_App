@@ -11,13 +11,6 @@ const[password,setPassword] = useState()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // const userData = {
-    //   name,  // ✅ Ensure correct field names match backend schema
-    //   email,
-    //   password,
-    // };
-  
     try {
       const response = await axios.post("http://localhost:5000/api/auth/register", {name,email,password}, {
         headers: { "Content-Type": "application/json" }, // ✅ Ensure correct JSON headers
@@ -105,10 +98,10 @@ const[password,setPassword] = useState()
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-600">
-            Already have an account?<Link to="/login">Login</Link>
-            <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Already have an account?<Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">Login</Link>
+            {/* <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
               Login
-            </a>
+            </a> */}
           </p>
         </div>
       </div>
