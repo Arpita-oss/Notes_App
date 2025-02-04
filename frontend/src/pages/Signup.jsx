@@ -40,7 +40,7 @@ const[password,setPassword] = useState()
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700" >
                 Name
               </label>
               <div className="mt-1">
@@ -48,6 +48,7 @@ const[password,setPassword] = useState()
                   id="name"
                   name="name"
                   type="text"
+                  placeholder='Enter atleast three characters'
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   onChange={(e) => setName( e.target.value )}

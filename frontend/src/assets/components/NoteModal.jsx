@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FaTimes, FaImage, FaPlus } from 'react-icons/fa';
 
+
+
 const NoteModal = ({ isOpen, onClose, AddNote }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -16,10 +18,13 @@ const NoteModal = ({ isOpen, onClose, AddNote }) => {
       reader.readAsDataURL(file);
     }
   };
-  const handleSubmit= async (e)=>{
-    e.preventDefault()
-    AddNote(title,description,image)
-  }
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  await AddNote(title, description, image);
+  resetForm();
+  onClose();
+};
 
   const resetForm = () => {
     setTitle('');
@@ -81,7 +86,7 @@ const NoteModal = ({ isOpen, onClose, AddNote }) => {
         </div>
 
         <button 
-          onClick={AddNote}
+          onClick={handleSubmit}
           className="w-full bg-green-500 text-white p-2 rounded flex items-center justify-center hover:bg-green-600"
         >
           <FaPlus className="mr-2" />

@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const NoteSchema = new mongoose.Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -11,22 +11,26 @@ const NoteSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  content: {
+  image: {
+    type: String  // Add this if you want to store image data
+  },
+  description: {
     type: String,
     required: true
   },
-  isAudioNote: {
-    type: Boolean,
-    default: false
-  },
-  audioTranscription: {
-    type: String,
-    default: ''
-  },
+//   isAudioNote: {
+//     type: Boolean,
+//     default: false
+//   },
+//   audioTranscription: {
+//     type: String,
+//     default: ''
+//   },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model('Note', NoteSchema);
+const Note = mongoose.model('Note', NoteSchema);
+export default Note

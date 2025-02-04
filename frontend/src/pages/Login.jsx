@@ -11,30 +11,26 @@ const[email,setEmail] = useState()
 const[password,setPassword] = useState()
 const {login} = useAuth()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // const userData = {
-    //   name,  // ✅ Ensure correct field names match backend schema
-    //   email,
-    //   password,
-    // };
-    try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {email,password}, {
-        headers: { "Content-Type": "application/json" }, // ✅ Ensure correct JSON headers
-      });
-  
-      if (response.data && response.data.token) {
-        login(response.data.user)
-        localStorage.setItem("token", response.data.token);
-        navigate("/");
-      } else {
-        console.error("Login failed: No token received");
-      }
-    } catch (error) {
-        
-      console.error("Error:", error.response?.data || error.message); // More detailed error logging
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post("http://localhost:5000/api/auth/login", 
+      { email, password },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    if (response.data && response.data.token) {
+      // Store the complete token including 'Bearer '
+      localStorage.setItem("token", response.data.token);
+      login(response.data.user);
+      console.log("Token stored:", response.data.token); // Debug log
+      navigate("/");
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error.response?.data || error.message);
+    alert(error.response?.data?.message || "Login failed");
+  }
+};
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
