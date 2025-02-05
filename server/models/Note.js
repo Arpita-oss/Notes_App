@@ -11,21 +11,21 @@ const NoteSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  image: {
-    type: String  // Add this if you want to store image data
-  },
   description: {
     type: String,
     required: true
   },
-//   isAudioNote: {
-//     type: Boolean,
-//     default: false
-//   },
-//   audioTranscription: {
-//     type: String,
-//     default: ''
-//   },
+  image: {
+    type: String
+  },
+  isAudioNote: {
+    type: Boolean,
+    default: false
+  },
+  audioTranscription: {
+    type: String,
+    default: ''
+  },
   createdAt: {
     type: Date,
     default: Date.now

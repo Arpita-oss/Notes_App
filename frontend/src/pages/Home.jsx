@@ -4,14 +4,17 @@ import NoteModal from '../assets/components/NoteModal';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import NoteCard from '../assets/components/NoteCard';
+import AudioNoteModal from '../assets/components/AudioNoteModal';
 
 const Home = () => {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
   const [notes, setNotes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
   const [isLoading, setIsLoading] = useState(true);
+ 
 
   const fetchNotes = async () => {
     try {
@@ -45,7 +48,7 @@ const Home = () => {
     fetchNotes();
   };
 
-  const AddNote = async (title, description, image) => {
+  const AddNote = async (title, description, image, isAudioNote = false, audioTranscription = '') => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -53,10 +56,16 @@ const Home = () => {
         navigate("/login");
         return;
       }
-
+  
       const response = await axios.post(
         "http://localhost:5000/api/note/add",
-        { title, description, image },
+        { 
+          title, 
+          description, 
+          image, 
+          isAudioNote, 
+          audioTranscription 
+        },
         {
           headers: {
             'Authorization': token,
@@ -64,7 +73,7 @@ const Home = () => {
           }
         }
       );
-
+  
       if (response.status === 201) {
         onClose();
         fetchNotes();
@@ -216,11 +225,22 @@ const Home = () => {
         >
           +
         </button>
+        <button
+          onClick={() => setIsAudioModalOpen(true)}
+          className="fixed right-20 bottom-4 text-2xl bg-blue-500 text-white font-bold p-4 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+        >
+          🎤
+        </button>
         <NoteModal
           isOpen={isModalOpen}
           onClose={onClose}
           AddNote={AddNote}
         />
+       <AudioNoteModal
+        isOpen={isAudioModalOpen}
+        onClose={() => setIsAudioModalOpen(false)}
+        AddNote={AddNote} // Ensure AddNote is passed as a prop
+      />
       </div>
     </div>
   );

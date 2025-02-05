@@ -7,28 +7,36 @@ const router = express.Router()
 
 router.post('/add', middleware, async (req, res) => {
     try {
-        const { title, description, image } = req.body;
-        
-        const newNote = new Note({
-            title,
-            description,
-            image,
-            userId: req.user.id  // Now we can access the user ID from req.user
-        });
-        
-        await newNote.save();
-        res.status(201).json({
-            message: 'Created Note successfully',
-            note: newNote
-        });
+      const { 
+        title, 
+        description, 
+        image, 
+        isAudioNote, 
+        audioTranscription 
+      } = req.body;
+  
+      const newNote = new Note({
+        title,
+        description,
+        image,
+        userId: req.user.id,
+        isAudioNote: isAudioNote || false,
+        audioTranscription: audioTranscription || ''
+      });
+  
+      await newNote.save();
+      res.status(201).json({
+        message: 'Created Note successfully',
+        note: newNote
+      });
     } catch (error) {
-        console.error("Error in creating note:", error);
-        res.status(500).json({
-            message: 'Error in creating a Note',
-            error: error.message
-        });
+      console.error("Error in creating note:", error);
+      res.status(500).json({
+        message: 'Error in creating a Note',
+        error: error.message
+      });
     }
-});
+  });
 
 router.get('/', middleware, async(req, res) => {
     try {
