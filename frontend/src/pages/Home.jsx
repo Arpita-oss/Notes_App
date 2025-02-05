@@ -156,15 +156,15 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       <Navbar />
-      <div className="ml-64 w-full min-h-screen">
+      <div className="flex-1 md:ml-64 min-h-screen">
         {/* Search and Sort Bar */}
-        <div className="sticky  top-0 bg-white shadow-sm z-10">
-          <div className="container mx-auto px-6 py-4">
+        <div className="sticky top-0 bg-white shadow-sm z-10">
+          <div className="container mx-auto px-4 py-4">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
               {/* Search Input */}
-              <div className="relative w-full md:w-250">
+              <div className="relative w-full md:w-1/2">
                 <input
                   type="text"
                   placeholder="Search notes..."
@@ -184,7 +184,7 @@ const Home = () => {
 
               {/* Sort Dropdown */}
               <div className="flex items-center gap-2">
-                <span className="text-gray-600">Sort by:</span>
+                <span className="text-gray-600 hidden md:inline">Sort by:</span>
                 <select
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value)}
@@ -199,9 +199,9 @@ const Home = () => {
         </div>
 
         {/* Notes Grid */}
-        <div className="container mx-auto px-6 py-8">
+        <div className="container mx-auto px-4 py-8">
           {notes && notes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {getFilteredAndSortedNotes().map(note => (
                 <NoteCard
                   key={note._id}
@@ -218,29 +218,33 @@ const Home = () => {
           )}
         </div>
 
-        {/* Add Note Button */}
-        <button
-          onClick={() => setModalOpen(true)}
-          className="fixed right-4 bottom-4 text-2xl bg-teal-500 text-white font-bold p-4 rounded-full shadow-lg hover:bg-teal-600 transition-colors"
-        >
-          +
-        </button>
-        <button
-          onClick={() => setIsAudioModalOpen(true)}
-          className="fixed right-20 bottom-4 text-2xl bg-blue-500 text-white font-bold p-4 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
-        >
-          🎤
-        </button>
+        {/* Floating Buttons */}
+        <div className="fixed bottom-4 right-4 z-20 flex space-x-4">
+          <button
+            onClick={() => setIsAudioModalOpen(true)}
+            className="text-2xl bg-blue-500 text-white font-bold p-4 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+          >
+            🎤
+          </button>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="text-2xl bg-teal-500 text-white font-bold p-4 rounded-full shadow-lg hover:bg-teal-600 transition-colors"
+          >
+            +
+          </button>
+        </div>
+
+        {/* Modals */}
         <NoteModal
           isOpen={isModalOpen}
           onClose={onClose}
           AddNote={AddNote}
         />
-       <AudioNoteModal
-        isOpen={isAudioModalOpen}
-        onClose={() => setIsAudioModalOpen(false)}
-        AddNote={AddNote} // Ensure AddNote is passed as a prop
-      />
+        <AudioNoteModal
+          isOpen={isAudioModalOpen}
+          onClose={() => setIsAudioModalOpen(false)}
+          AddNote={AddNote}
+        />
       </div>
     </div>
   );

@@ -1,108 +1,165 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 const AudioNoteModal = ({ isOpen, onClose, AddNote }) => {
-    const [isRecording, setIsRecording] = useState(false);
-    const [transcript, setTranscript] = useState('');
-    const [audioLevel, setAudioLevel] = useState(0);
-    const mediaRecorderRef = useRef(null);
-    const audioContextRef = useRef(null);
-    const analyserRef = useRef(null);
-    const streamRef = useRef(null);
-    const recognitionRef = useRef(null);
-  
-    const startRecording = () => {
-      // Check for browser support
-      if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
-        alert('Your browser does not support speech recognition');
-        return;
-      }
-  
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-          streamRef.current = stream;
-          
-          // Audio Context for visualization
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          audioContextRef.current = new AudioContext();
-          const source = audioContextRef.current.createMediaStreamSource(stream);
-          
-          analyserRef.current = audioContextRef.current.createAnalyser();
-          source.connect(analyserRef.current);
-          
-          // Speech Recognition
-          const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-          recognitionRef.current = new SpeechRecognition();
-          recognitionRef.current.continuous = true;
-          recognitionRef.current.interimResults = true;
-          
-          recognitionRef.current.onresult = (event) => {
-            const transcriptResult = Array.from(event.results)
-              .map(result => result[0].transcript)
-              .join('');
-            setTranscript(transcriptResult);
-          };
-          
-          recognitionRef.current.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
-          };
-          
-          recognitionRef.current.start();
-          
-          // Start recording
-          mediaRecorderRef.current = new MediaRecorder(stream);
-          mediaRecorderRef.current.start();
-          
-          setIsRecording(true);
-          updateAudioLevel();
-        })
-        .catch(error => {
-          console.error('Microphone access error:', error);
-          alert('Could not access microphone. Check permissions.');
-        });
+  const [isRecording, setIsRecording] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [transcript, setTranscript] = useState('');
+  const [audioLevel, setAudioLevel] = useState(0);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const mediaRecorderRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const streamRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    // Cleanup function to stop any ongoing recording
+    return () => {
+      stopRecording();
     };
-  
-    const updateAudioLevel = () => {
-      if (!analyserRef.current || !isRecording) return;
-  
-      const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-      analyserRef.current.getByteFrequencyData(dataArray);
-      
-      const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-      setAudioLevel(average / 255);
-      
-      if (isRecording) {
-        requestAnimationFrame(updateAudioLevel);
-      }
-    };
-  
-    const stopRecording = () => {
-      if (mediaRecorderRef.current) {
-        mediaRecorderRef.current.stop();
-      }
-      
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-      
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-      
-      setIsRecording(false);
-      setAudioLevel(0);
-    };
-  
-    const saveAudioNote = () => {
-        if (transcript.trim() && AddNote) {
-          AddNote('Audio Note', transcript, null, true, transcript);
-          onClose();
-        }
+  }, []);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
       };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const startRecording = () => {
+    // Ensure browser compatibility
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Your browser does not support speech recognition. Try Chrome or Edge.');
+      return;
+    }
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        // Setup audio context
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioContext();
+        const source = audioContext.createMediaStreamSource(stream);
+        
+        const analyser = audioContext.createAnalyser();
+        source.connect(analyser);
+
+        // Setup speech recognition
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = (event) => {
+          const results = Array.from(event.results);
+          const transcript = results
+            .map(result => result[0].transcript)
+            .join('');
+          
+          setTranscript(transcript);
+        };
+
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          alert(`Speech recognition error: ${event.error}`);
+        };
+
+        // Start recognition and recording
+        recognition.start();
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+
+        // Save references for cleanup
+        streamRef.current = stream;
+        mediaRecorderRef.current = mediaRecorder;
+        recognitionRef.current = recognition;
+        audioContextRef.current = audioContext;
+        analyserRef.current = analyser;
+
+        setIsRecording(true);
+        updateAudioLevel(analyser);
+      })
+      .catch(error => {
+        console.error('Microphone access error:', error);
+        alert('Could not access microphone. Check permissions and try again.');
+      });
+  };
+
+  const updateAudioLevel = (analyser) => {
+    if (!analyser || !isRecording) return;
+
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(dataArray);
     
+    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+    setAudioLevel(average / 255);
+    
+    requestAnimationFrame(() => updateAudioLevel(analyser));
+  };
+
+  const stopRecording = () => {
+    // Stop all recording resources
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+    }
+
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+    }
+
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+    }
+
+    setIsRecording(false);
+    setAudioLevel(0);
+  };
+
+  const saveAudioNote = () => {
+    if (!title.trim()) {
+      alert('Please add a title for your note');
+      return;
+    }
+
+    const imageBase64 = imagePreview || null;
+
+    AddNote(
+      title, 
+      description || transcript, 
+      imageBase64, 
+      true, 
+      transcript
+    );
+    
+    // Reset modal state
+    setTitle('');
+    setDescription('');
+    setTranscript('');
+    setImageFile(null);
+    setImagePreview(null);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -118,7 +175,53 @@ const AudioNoteModal = ({ isOpen, onClose, AddNote }) => {
         
         <h2 className="text-xl font-bold mb-4">Audio Note</h2>
         
-        {/* Audio Level Indicator */}
+        <input 
+          type="text"
+          placeholder="Note Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full mb-3 p-2 border rounded"
+        />
+
+        <textarea 
+          placeholder="Additional Description (Optional)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full mb-3 p-2 border rounded h-20"
+        />
+
+        <div className="mb-3">
+          <input 
+            type="file" 
+            ref={fileInputRef}
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+            id="imageUpload"
+          />
+          <label 
+            htmlFor="imageUpload" 
+            className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
+          >
+            Upload Image
+          </label>
+          {imagePreview && (
+            <div className="mt-2 relative">
+              <img 
+                src={imagePreview} 
+                alt="Preview" 
+                className="max-w-full h-40 object-cover rounded"
+              />
+              <button 
+                onClick={removeImage}
+                className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
+
         <div className="mb-4 h-2 bg-gray-200 rounded">
           <div 
             className="h-full bg-green-500 rounded" 

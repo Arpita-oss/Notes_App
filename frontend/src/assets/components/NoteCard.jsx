@@ -122,7 +122,15 @@ const NoteCard = ({ note, onDelete, onUpdate }) => {
           Copied to clipboard!
         </div>
       )}
+      <div className="absolute bottom-2 left-4 text-xl text-gray-500">
+        {note.isAudioNote ? (
+          <span title="Audio Transcription Note">🎙️</span>
+        ) : (
+          <span title="Text Note">📝</span>
+        )}
+      </div>
     </div>
+    
   );
 };
 
