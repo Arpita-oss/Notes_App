@@ -51,7 +51,7 @@ const Navbar = () => {
             </li>
             <li className="mb-4">
               <Link 
-                to="/favourite" 
+                to="/favourites" 
                 onClick={() => setIsMenuOpen(false)}
                 className="text-gray-700 hover:text-blue-600 transition"
               >
@@ -66,7 +66,7 @@ const Navbar = () => {
             <h3 className="text-lg font-semibold text-gray-800">
               {user?.name || 'User'}
             </h3>
-            <p className="text-sm text-gray-600">Software Engineer</p>
+            <p className="text-sm text-gray-600">{user?.designation ||'Your Dream Designation'}</p>
           </div>
         </div>
       </div>

@@ -117,6 +117,69 @@ router.delete('/:id', middleware, async (req, res) => {
         });
     }
   });
+
+  const toggleFavorite = async (req, res) => {
+    try {
+      const note = await Note.findOne({ 
+        _id: req.params.id, 
+        userId: req.user.id 
+      });
+      
+      if (!note) {
+        return res.status(404).json({ message: 'Note not found' });
+      }
+  
+      note.isFavorite = !note.isFavorite;
+      await note.save();
+      
+      res.json(note);
+    } catch (error) {
+      res.status(500).json({ message: 'Error toggling favorite' });
+    }
+  };
+
+  // const getFavorites = async (req, res) => {
+  //   try {
+  //     const favorites = await Note.find({ 
+  //       userId: req.user._id, 
+  //       isFavorite: true 
+  //     });
+  //     res.json(favorites);
+  //   } catch (error) {
+  //     res.status(500).json({ message: 'Error fetching favorites' });
+  //   }
+  // };
+
+  router.put('/toggle-favorite/:id', middleware, async (req, res) => {
+    try {
+      const note = await Note.findOne({ 
+        _id: req.params.id, 
+        userId: req.user.id 
+      });
+      
+      if (!note) {
+        return res.status(404).json({ message: 'Note not found' });
+      }
+  
+      note.isFavorite = !note.isFavorite;
+      await note.save();
+      
+      res.json(note);
+    } catch (error) {
+      res.status(500).json({ message: 'Error toggling favorite' });
+    }
+  });
+router.get('/favourites', middleware, async (req, res) => {
+    try {
+      const favouriteNotes = await Note.find({ 
+        userId: req.user.id, 
+        isFavorite: true 
+      });
+      res.json(favouriteNotes);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching favourite notes' });
+    }
+  });
   
 
 export default router

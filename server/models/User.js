@@ -8,6 +8,12 @@ const userSchema = new mongoose.Schema({
     trim: true,
     minlength: 3
   },
+  designation: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 3
+  },
   email: {
     type: String,
     required: true,

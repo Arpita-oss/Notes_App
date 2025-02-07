@@ -2,7 +2,7 @@ import React from 'react'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
 import Login from './pages/Login'
-import Navbar from './assets/components/Navbar'
+import FavouriteCard from './pages/FavouriteCard'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import { Navigate } from 'react-router-dom';
 
@@ -25,6 +25,7 @@ const App = () => {
         } />
         <Route path="/register" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/favourites" element={ <FavouriteCard />} />
       </Routes>
     </BrowserRouter>
   );

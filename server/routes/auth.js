@@ -2,16 +2,16 @@ import express from 'express';
 import User from '../models/User.js';  // ✅ Import the User model
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import middleware from '../middleware/middleware.js'
+
 
 
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
   try {
-      const { name, email, password } = req.body;
+      const { name,designation, email, password } = req.body;
 
-      if (!name || !email || !password) {
+      if (!name || !email || !password || !designation) {
           return res.status(400).json({ message: "All fields are required" });
       }
 
@@ -30,6 +30,7 @@ router.post('/register', async (req, res) => {
 
       const user = new User({
           name,
+          designation,
           email,
           password: hashedPassword
       });
@@ -49,6 +50,7 @@ router.post('/register', async (req, res) => {
           user: {
               id: user._id,
               name: user.name,
+              designation:user.designation,
               email: user.email
           }
       });
@@ -91,6 +93,7 @@ router.post('/login', async(req,res)=>{
       user: {
         id: user._id,
         name: user.name,
+        designation:user.designation,
         email: user.email
       }
     });
