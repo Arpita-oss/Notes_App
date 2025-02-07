@@ -1,17 +1,14 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-
-
+dotenv.config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/notes-taking-app", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB Connected Successfully');
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('MongoDB Connection Error:', error.message);
+    console.error('MongoDB Connection Error:', error);
     process.exit(1);
   }
 };
