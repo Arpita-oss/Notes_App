@@ -4,7 +4,7 @@ import {Link, useNavigate} from 'react-router-dom'
 
 
 const Signup = () => {
-  const navigate = useNavigate()
+const navigate = useNavigate()
 const[name,setName] = useState()
 const[designation,setDesignation] = useState()
 const[email,setEmail] = useState()

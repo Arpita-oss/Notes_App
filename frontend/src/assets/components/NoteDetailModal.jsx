@@ -44,12 +44,25 @@ const NoteDetailModal = ({ note, onClose, onUpdate }) => {
   const handleToggleFavorite = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`/api/notes/toggle-favorite/${note._id}`, {}, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      onUpdate({ ...note, isFavorite: !note.isFavorite });
+      // Fix the API endpoint URL
+      const response = await axios.put(
+        `http://localhost:5000/api/note/toggle-favorite/${note._id}`,
+        {},
+        {
+          headers: { 
+            'Authorization': token  // Remove 'Bearer ' since your token already includes it
+          }
+        }
+      );
+  
+      if (response.data.success) {
+        // Update the note with the new favorite status
+        onUpdate({ ...note, isFavorite: !note.isFavorite });
+      }
     } catch (error) {
-      console.error('Toggle favorite failed', error);
+      console.error('Toggle favorite failed:', error);
+      // Add user feedback for errors
+      alert('Failed to update favorite status');
     }
   };
 
