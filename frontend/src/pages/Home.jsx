@@ -23,7 +23,7 @@ const Home = () => {
         navigate("/login");
         return;
       }
-      const { data } = await axios.get("http://localhost:5000/api/note", {
+      const { data } = await axios.get("https://notes-app-1-3vhl.onrender.com/api/note", {
         headers: {
           'Authorization': token
         }
@@ -58,7 +58,7 @@ const Home = () => {
       }
   
       const response = await axios.post(
-        "http://localhost:5000/api/note/add",
+        "https://notes-app-1-3vhl.onrender.com/api/note/add",
         { 
           title, 
           description, 
@@ -92,7 +92,7 @@ const Home = () => {
   const handleDeleteNote = async (noteId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/note/${noteId}`, {
+      await axios.delete(`https://notes-app-1-3vhl.onrender.com/api/note/${noteId}`, {
         headers: {
           'Authorization': token
         }
@@ -109,7 +109,7 @@ const Home = () => {
   const handleUpdateNote = async (noteId, updatedNote) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/note/${noteId}`, updatedNote, {
+      await axios.put(`https://notes-app-1-3vhl.onrender.com/api/note/${noteId}`, updatedNote, {
         headers: {
           'Authorization': token
         }

@@ -17,7 +17,7 @@ const NoteDetailModal = ({ note, onClose, onUpdate }) => {
 
       // Fix the API endpoint URL to match your backend route
       const response = await axios.put(
-        `http://localhost:5000/api/note/${note._id}`,  // Changed from /api/notes to match your backend
+        `https://notes-app-1-3vhl.onrender.com/api/note/${note._id}`,  // Changed from /api/notes to match your backend
         {
           title: editedNote.title,
           description: editedNote.description,
@@ -46,15 +46,15 @@ const NoteDetailModal = ({ note, onClose, onUpdate }) => {
       const token = localStorage.getItem('token');
       // Fix the API endpoint URL
       const response = await axios.put(
-        `http://localhost:5000/api/note/toggle-favorite/${note._id}`,
+        `http://:5000/api/note/toggle-favorite/${note._id}`,
         {},
         {
-          headers: { 
+          headers: {
             'Authorization': token  // Remove 'Bearer ' since your token already includes it
           }
         }
       );
-  
+
       if (response.data.success) {
         // Update the note with the new favorite status
         onUpdate({ ...note, isFavorite: !note.isFavorite });

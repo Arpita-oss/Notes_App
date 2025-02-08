@@ -13,7 +13,7 @@ const[password,setPassword] = useState()
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", {name,designation,email,password}, {
+      const response = await axios.post("https://notes-app-1-3vhl.onrender.com/api/auth/register", {name,designation,email,password}, {
         headers: { "Content-Type": "application/json" }, // ✅ Ensure correct JSON headers
       });
   

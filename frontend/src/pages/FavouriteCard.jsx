@@ -18,7 +18,7 @@ const FavouriteCard = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:5000/api/note/favourites", {
+        const response = await axios.get("https://notes-app-1-3vhl.onrender.com/api/note/favourites", {
           headers: { Authorization: token }
         });
         
@@ -39,7 +39,7 @@ const FavouriteCard = () => {
   const handleDeleteNote = async (noteId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/note/${noteId}`, {
+      await axios.delete(`https://notes-app-1-3vhl.onrender.com/api/note/${noteId}`, {
         headers: { Authorization: token }
       });
       setFavourites(favourites.filter(note => note._id !== noteId));
@@ -52,7 +52,7 @@ const FavouriteCard = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `http://localhost:5000/api/note/${noteId}`, 
+        `https://notes-app-1-3vhl.onrender.com/api/note/${noteId}`, 
         updatedNote, 
         { headers: { Authorization: token } }
       );

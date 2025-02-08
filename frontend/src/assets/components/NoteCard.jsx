@@ -33,7 +33,7 @@ const NoteCard = ({ note, onDelete, onUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/note/toggle-favorite/${note._id}`,
+        `https://notes-app-1-3vhl.onrender.com/api/note/toggle-favorite/${note._id}`,
         {},
         { headers: { Authorization: token } }
       );
